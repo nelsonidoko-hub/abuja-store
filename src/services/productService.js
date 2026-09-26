@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const API_URL = 'http://localhost:5000/api/products'
+const API_URL = 'https://abuja-store-backend.onrender.com/api/products'
 const authHeader = (token) => ({
   headers: { Authorization: `Bearer ${token}` },
 })

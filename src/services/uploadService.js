@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const API_URL = 'http://localhost:5000/api/upload'
+const API_URL = 'https://abuja-store-backend.onrender.com/api/upload'
 
 export const uploadImage = async (file, token) => {
   const formData = new FormData()
