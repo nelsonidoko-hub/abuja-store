@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const API_URL = 'https://abuja-store-backend.onrender.com/api/auth'
+const API_URL = 'https://abuja-store-backend.onrender.com/api/users'
 
 export const registerUser = async (name, email, password) => {
   const response = await axios.post(`${API_URL}/register`, { name, email, password })
