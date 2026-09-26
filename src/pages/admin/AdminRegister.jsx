@@ -17,7 +17,7 @@ function AdminRegister() {
     setError('')
 
     try {
-      const response = await axios.post('http://localhost:5000/api/users/register-admin', {
+      const response = await axios.post('https://abuja-store-backend.onrender.com/api/users/register-admin', {
         name,
         email,
         password,
