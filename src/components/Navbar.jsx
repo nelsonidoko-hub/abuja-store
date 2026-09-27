@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
 import logo from '../assets/img/logo.png'
@@ -21,6 +21,18 @@ function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [openDropdown, setOpenDropdown] = useState(null)
   const location = useLocation()
+  const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+  const navigate = useNavigate()
+
+  function handleSearchSubmit(e) {
+    e.preventDefault()
+    if (searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`)
+      setIsSearchOpen(false)
+      setSearchQuery('')
+    }
+  }
 
   const categories = [
     { name: 'women', dropdown: null },
@@ -132,9 +144,41 @@ function Navbar() {
               Login
             </Link>
           )}
-          <button className={`hover:text-blue-600 hover:cursor-pointer ${textColor}`}>
-            <MagnifyingGlassIcon className="h-5 w-5" />
+
+          {/* search start */}
+          <button onClick={() => setIsSearchOpen(!isSearchOpen)}>
+            <MagnifyingGlassIcon className={`h-5 w-5 ${textColor}`} />
           </button>
+
+          {isSearchOpen && (
+            <div className="fixed inset-0 bg-black/40 z-50 flex items-start justify-center pt-24">
+              <form
+                onSubmit={handleSearchSubmit}
+                className="bg-white rounded-lg p-4 w-full max-w-md mx-4 flex gap-2"
+              >
+                <input
+                  type="text"
+                  autoFocus
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search products..."
+                  className="flex-1 border rounded-md px-3 py-2"
+                />
+                <button type="submit" className="bg-gray-900 text-white px-4 py-2 rounded-md">
+                  Search
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsSearchOpen(false)}
+                  className="text-gray-500 px-2"
+                >
+                  ✕
+                </button>
+              </form>
+            </div>
+          )}
+
+          {/* search ends */}
           <button
             onClick={toggleCart}
             className={`flex items-center gap-1 capitalize font-poppins hover:text-blue-600 ${textColor} font-medium tracking-wide transition-colors whitespace-nowrap`}

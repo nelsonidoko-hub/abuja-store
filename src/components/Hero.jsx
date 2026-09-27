@@ -41,10 +41,13 @@ function Hero() {
       <div className="relative z-10 flex flex-col items-center justify-center text-center px-4 py-12 sm:py-0">
         <h1 className="text-2xl sm:text-4xl font-bold mb-4 font-poppins mb-3 sm:mb-4">{slide.heading}</h1>
         <p className="mb-6 font-poppins">{slide.text}</p>
-        <button className="bg-blue-600 text-white font-poppins px-6 py-3 rounded-md hover:bg-blue-700 flex items-start gap-2 mx-auto cursor-pointer">
+        <Link
+          to="/shop"
+          className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 flex items-center gap-2 mx-auto"
+        >
           Shop Now
-          <ArrowRightIcon className="h-5 w-5 font-poppins" />
-        </button>
+          <ArrowRightIcon className="h-5 w-5" />
+        </Link>
 
         <div className="flex gap-3 mt-8 border-b-2 border-black pb-1">
           {slides.map((s, index) => (

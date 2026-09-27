@@ -1,10 +1,8 @@
-import { useParams } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import ProductCard from '../components/ProductCard'
-import { getProductsByCategory } from '../services/productService'
+import { getProducts } from '../services/productService'
 
-function CategoryPage() {
-  const { categoryName } = useParams()
+function Shop() {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
   const [sortBy, setSortBy] = useState('newest')
@@ -14,7 +12,7 @@ function CategoryPage() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const data = await getProductsByCategory(categoryName)
+        const data = await getProducts()
         setProducts(data)
       } catch (error) {
         console.error(error)
@@ -24,7 +22,7 @@ function CategoryPage() {
     }
 
     fetchProducts()
-  }, [categoryName])
+  }, [])
 
   function getFilteredProducts() {
     let result = [...products]
@@ -51,15 +49,10 @@ function CategoryPage() {
 
   const filteredProducts = getFilteredProducts()
 
-  if (loading) {
-    return <p className="px-6 md:px-10 py-12">Loading...</p>
-  }
-
   return (
     <div className="px-6 md:px-10 py-8">
-      <h2 className="text-2xl font-bold mb-6 capitalize">{categoryName}</h2>
+      <h2 className="text-2xl font-bold mb-6">Shop All</h2>
 
-      {/* Filter bar */}
       <div className="flex flex-wrap gap-4 mb-8 pb-4 border-b">
         <select
           value={sortBy}
@@ -97,8 +90,10 @@ function CategoryPage() {
         </span>
       </div>
 
-      {filteredProducts.length === 0 ? (
-        <p className="text-gray-500">No products found matching your filters.</p>
+      {loading ? (
+        <p>Loading products...</p>
+      ) : filteredProducts.length === 0 ? (
+        <p className="text-gray-500">No products found.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {filteredProducts.map((product) => (
@@ -110,4 +105,4 @@ function CategoryPage() {
   )
 }
 
-export default CategoryPage
+export default Shop

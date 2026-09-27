@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from 'react'
+import { Link } from 'react-router-dom'
 import ProductCard from '../components/ProductCard'
 import Hero from '../components/Hero'
-import { getProducts, getProductsByCategory, getBestSellers} from '../services/productService'
+import { getProducts, getProductsByCategory, getBestSellers } from '../services/productService'
 import c2 from '../assets/img/c2.jpg'
-import { ChevronLeftIcon,ChevronRightIcon} from '@heroicons/react/24/outline'
+import { ChevronLeftIcon, ChevronRightIcon, ArrowRightIcon } from '@heroicons/react/24/outline'
 
 function Home() {
   const [products, setProducts] = useState([])
@@ -48,20 +49,16 @@ function Home() {
 
   const handleBestSellerScroll = () => {
     const el = bestSellerRef.current
-    if (!el) return;
-    // const scrollAmount = direction === 'left' ? -300 : 300;
-    // el.scrollBy({ left: scrollAmount, behavior : 'smooth'});
+    if (!el) return
     const total = el.scrollWidth - el.clientWidth
     if (total > 0) setBestSellerProgress((el.scrollLeft / total) * 100)
   }
 
-  const scrollBestSellerScroll = () => {
+  const scrollBestSellerScroll = (direction) => {
     const el = bestSellerRef.current
-    if (!el) return;
-    const scrollAmount = direction === 'left' ? -300 : 300;
-    el.scrollBy({ left: scrollAmount, behavior : 'smooth'});
-    // const total = el.scrollWidth - el.clientWidth
-    // if (total > 0) setBestSellerProgress((el.scrollLeft / total) * 100)
+    if (!el) return
+    const scrollAmount = direction === 'left' ? -300 : 300
+    el.scrollBy({ left: scrollAmount, behavior: 'smooth' })
   }
 
   return (
@@ -72,7 +69,6 @@ function Home() {
         <div className="mt-12 mb-16 animate-fade-in">
           <h2 className="text-2xl font-poppins mb-2">New Arrivals</h2>
           <p className="text-gray-500 font-epilogue mb-2">Explore the newest drops from Zipp Republic</p>
-          {/* <h4 className="text-black-500 font-light text-2xl font-poppins underline mb-8">Wears</h4> */}
           <div className="grid grid-cols-1 min-[321px]:grid-cols-2 gap-3 sm:grid-cols-2 md:grid-cols-4 gap-6 font-epilogue">
             {gridProducts.map((product) => (
               <ProductCard key={product._id} product={product} />
@@ -81,17 +77,19 @@ function Home() {
         </div>
 
         <div className="">
-          <p className='text-center font-poppins mb-4'>Trending</p>
-          <h4 className="text-center text-2xl font-poppins  uppercase mb-6">Best Seller</h4>
+          <p className="text-center font-poppins mb-4">Trending</p>
+          <h4 className="text-center text-2xl font-poppins uppercase mb-6">Best Seller</h4>
           <div className="relative mt-6">
             {/* angle left */}
             <button
-              onClick ={() => scrollBestSellerScroll('left')} className = "absolute left-2 top-40 translate-y-1/2 z-10 bg-white/80 hover:bg-white p-2 rounded-full shadow-md text-gray-800 transition-all" aria-label="scroll left "
+              onClick={() => scrollBestSellerScroll('left')}
+              className="absolute left-2 top-40 translate-y-1/2 z-10 bg-white/80 hover:bg-white p-2 rounded-full shadow-md text-gray-800 transition-all"
+              aria-label="scroll left"
             >
               <ChevronLeftIcon className="w-10 h-10 cursor-pointer" />
             </button>
 
-            {/* Coursel Scroll */}
+            {/* Carousel Scroll */}
             <div
               ref={bestSellerRef}
               onScroll={handleBestSellerScroll}
@@ -107,32 +105,40 @@ function Home() {
                 ))
               )}
             </div>
+
             {/* angle Right */}
             <button
-              onClick ={() => scrollBestSellerScroll('right')} className = "absolute right-2 top-40 translate-y-1/2 z-10 bg-white/80 hover:bg-white p-2 rounded-full shadow-md text-gray-800 transition-all" aria-label="scroll right"
+              onClick={() => scrollBestSellerScroll('right')}
+              className="absolute right-2 top-40 translate-y-1/2 z-10 bg-white/80 hover:bg-white p-2 rounded-full shadow-md text-gray-800 transition-all"
+              aria-label="scroll right"
             >
               <ChevronRightIcon className="w-10 h-10 cursor-pointer" />
             </button>
 
-            
-
             <div className="w-1/2 bg-gray-200 h-0.5 rounded-full overflow-hidden mb-10">
               <div
                 className="bg-black h-full transition-all duration-150 ease-out rounded-full"
-                style={{ width: `${Math.max(footwearProgress, 10)}%` }}
+                style={{ width: `${Math.max(bestSellerProgress, 10)}%` }}
               />
             </div>
           </div>
         </div>
 
         {/* Section 2 - banner */}
-        <div className="relative w-full h-64 md:h-80 rounded-lg font-poppins overflow-hidden mb-16 flex items-center justify-center text-center text-white bg-gray-900 bg-cover bg-center" style={{ backgroundImage: `url(${c2})` }}>
+        <div
+          className="relative w-full h-64 md:h-80 rounded-lg font-poppins overflow-hidden mb-16 flex items-center justify-center text-center text-white bg-gray-900 bg-cover bg-center"
+          style={{ backgroundImage: `url(${c2})` }}
+        >
           <div className="relative z-10 px-6">
             <h3 className="text-3xl font-bold mb-2">New Season, New Style</h3>
             <p className="mb-4">Check out our latest collection before it sells out</p>
-            <button className="bg-white text-gray-900 px-6 py-2 rounded-md font-semibold hover:bg-gray-100 transition-colors">
-              Shop Collection
-            </button>
+            <Link
+              to="/shop"
+              className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 flex items-center gap-2 mx-auto w-fit"
+            >
+              Shop Now
+              <ArrowRightIcon className="h-5 w-5" />
+            </Link>
           </div>
         </div>
 
@@ -161,10 +167,9 @@ function Home() {
             />
           </div>
         </div>
-
-        
       </div>
     </div>
   )
 }
+
 export default Home

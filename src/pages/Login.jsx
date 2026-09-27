@@ -23,7 +23,7 @@ function Login() {
 
   return (
     <div className="max-w-md mx-auto">
-      <h2 className="text-2xl font-bold mb-6">Login</h2>
+      <h2 className="text-2xl font-bold mt-20 mb-6">Login</h2>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input

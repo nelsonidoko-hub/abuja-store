@@ -20,3 +20,17 @@ export const getAllOrders = async (token) => {
   const response = await axios.get(API_URL, authHeader(token))
   return response.data
 }
+
+export const updateOrderStatus = async (orderId, status, token) => {
+  const response = await axios.put(
+    `${API_URL}/${orderId}/status`,
+    { status },
+    authHeader(token)
+  )
+  return response.data
+}
+
+export const getOrdersByUserId = async (userId, token) => {
+  const response = await axios.get(`${API_URL}/user/${userId}`, authHeader(token))
+  return response.data
+}

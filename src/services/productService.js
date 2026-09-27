@@ -40,3 +40,8 @@ export const deleteProduct = async (id, token) => {
   const response = await axios.delete(`${API_URL}/${id}`, authHeader(token))
   return response.data
 }
+
+export const searchProducts = async (query) => {
+  const response = await axios.get(`${API_URL}/search?q=${encodeURIComponent(query)}`)
+  return response.data
+}
