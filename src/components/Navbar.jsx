@@ -151,31 +151,35 @@ function Navbar() {
           </button>
 
           {isSearchOpen && (
-            <div className="fixed inset-0 bg-black/40 z-50 flex items-start justify-center pt-24">
-              <form
-                onSubmit={handleSearchSubmit}
-                className="bg-white rounded-lg p-4 w-full max-w-md mx-4 flex gap-2"
+          <div
+            className="fixed inset-0 bg-black/40 z-[60] flex items-start justify-center pt-24 px-4"
+            onClick={() => setIsSearchOpen(false)}
+          >
+            <form
+              onSubmit={handleSearchSubmit}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white rounded-lg p-4 w-full max-w-md flex gap-2"
+            >
+              <input
+                type="text"
+                autoFocus
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search products..."
+                className="flex-1 min-w-0 border border-gray-300 rounded-md px-3 py-2 bg-white text-gray-900 placeholder:text-gray-400"
+              />
+              <button type="submit" className="bg-gray-900 text-white px-4 py-2 rounded-md">
+                Search
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsSearchOpen(false)}
+                className="text-gray-500 px-2"
               >
-                <input
-                  type="text"
-                  autoFocus
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search products..."
-                  className="flex-1 border rounded-md px-3 py-2"
-                />
-                <button type="submit" className="bg-gray-900 text-white px-4 py-2 rounded-md">
-                  Search
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setIsSearchOpen(false)}
-                  className="text-gray-500 px-2"
-                >
-                  ✕
-                </button>
-              </form>
-            </div>
+                ✕
+              </button>
+            </form>
+          </div>
           )}
 
           {/* search ends */}
@@ -242,7 +246,17 @@ function Navbar() {
           </Link>
 
           <div className="flex items-center gap-3">
-            <button className="text-gray-800 p-1">
+            <button onClick={() => setIsSearchOpen(true)} className={`p-1 ${textColor}`}>
+              <MagnifyingGlassIcon className="h-5 w-5" />
+            </button>
+
+            <button
+              onClick={() => {
+                setIsMenuOpen(false)
+                setIsSearchOpen(true)
+              }}
+              className="text-gray-800 p-1"
+            >
               <MagnifyingGlassIcon className="h-5 w-5" />
             </button>
             <button

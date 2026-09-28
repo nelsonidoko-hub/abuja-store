@@ -1,19 +1,20 @@
-import { createContext, useContext, useState, useEffect } from 'react'
+import { createContext, useContext, useState } from 'react'
 import { loginUser, registerUser } from '../services/authService'
 
 const AuthContext = createContext()
 
-export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null)
-  const [loading, setLoading] = useState(true)
+function getStoredUser() {
+  try {
+    const stored = localStorage.getItem('user')
+    return stored ? JSON.parse(stored) : null
+  } catch {
+    localStorage.removeItem('user')
+    return null
+  }
+}
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem('user')
-    if (storedUser) {
-      setUser(JSON.parse(storedUser))
-    }
-    setLoading(false)
-  }, [])
+export function AuthProvider({ children }) {
+  const [user, setUser] = useState(getStoredUser)
 
   async function login(email, password) {
     const data = await loginUser(email, password)
@@ -33,7 +34,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, setUser, loading }}>
+    <AuthContext.Provider value={{ user, login, register, logout, setUser, loading: false }}>
       {children}
     </AuthContext.Provider>
   )

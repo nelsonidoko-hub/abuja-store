@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import ProductCard from '../components/ProductCard'
+import Footer from '../components/Footer'
 import Hero from '../components/Hero'
 import { getProducts, getProductsByCategory, getBestSellers } from '../services/productService'
 import c2 from '../assets/img/c2.jpg'
@@ -63,7 +64,7 @@ function Home() {
 
   return (
     <div className="">
-      <Hero />
+      <Hero className="mb-12" />
       <div className="px-6 md:px-10">
         {/* Section 1 */}
         <div className="mt-12 mb-16 animate-fade-in">
@@ -115,7 +116,7 @@ function Home() {
               <ChevronRightIcon className="w-10 h-10 cursor-pointer" />
             </button>
 
-            <div className="w-1/2 bg-gray-200 h-0.5 rounded-full overflow-hidden mb-10">
+            <div className="w-100 bg-gray-400 m-auto h-0.5 rounded-full overflow-hidden mb-10">
               <div
                 className="bg-black h-full transition-all duration-150 ease-out rounded-full"
                 style={{ width: `${Math.max(bestSellerProgress, 10)}%` }}
@@ -160,7 +161,7 @@ function Home() {
             )}
           </div>
 
-          <div className="w-1/2 bg-gray-200 h-0.5 rounded-full overflow-hidden mt-1">
+          <div className="w-100 bg-gray-400 h-0.5 m-auto mb-20 rounded-full overflow-hidden mt-1">
             <div
               className="bg-black h-full transition-all duration-150 ease-out rounded-full"
               style={{ width: `${Math.max(footwearProgress, 10)}%` }}
@@ -168,6 +169,8 @@ function Home() {
           </div>
         </div>
       </div>
+
+      <Footer />
     </div>
   )
 }
