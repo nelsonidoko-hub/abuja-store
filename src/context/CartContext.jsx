@@ -83,9 +83,13 @@ export function CartProvider({ children }) {
     )
   }
 
+  // function clearCart() {
+  //   setCartItems([])
+  //   localStorage.removeItem('cartItems')
+  // }
+
   function clearCart() {
     setCartItems([])
-    localStorage.removeItem('cartItems')
   }
 
   return (

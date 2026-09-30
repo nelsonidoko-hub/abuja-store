@@ -21,16 +21,24 @@ export const getAllOrders = async (token) => {
   return response.data
 }
 
-export const updateOrderStatus = async (orderId, status, token) => {
-  const response = await axios.put(
-    `${API_URL}/${orderId}/status`,
-    { status },
-    authHeader(token)
-  )
+export const getOrderById = async (id, token) => {
+  const response = await axios.get(`${API_URL}/${id}`, authHeader(token))
+  return response.data
+}
+
+export const updateOrderStatus = async (orderId, payload, token) => {
+  const response = await axios.put(`${API_URL}/${orderId}/status`, payload, authHeader(token))
+  return response.data
+}
+
+export const cancelOrder = async (orderId, token) => {
+  const response = await axios.put(`${API_URL}/${orderId}/cancel`, {}, authHeader(token))
   return response.data
 }
 
 export const getOrdersByUserId = async (userId, token) => {
-  const response = await axios.get(`${API_URL}/user/${userId}`, authHeader(token))
-  return response.data
+  const orders = await getAllOrders(token)
+  return orders.filter(
+    (order) => order.user === userId || order.user?._id === userId
+  )
 }

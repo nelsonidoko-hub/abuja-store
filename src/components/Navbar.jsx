@@ -145,6 +145,13 @@ function Navbar() {
             </Link>
           )}
 
+          {user && (
+            <Link to="/orders" className={`capitalize font-poppins hover:text-blue-600 ${textColor} font-medium tracking-wide whitespace-nowrap`}>
+              Orders
+            </Link>
+          )}
+
+          
           {/* search start */}
           <button onClick={() => setIsSearchOpen(!isSearchOpen)}>
             <MagnifyingGlassIcon className={`h-5 w-5 ${textColor}`} />

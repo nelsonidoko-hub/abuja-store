@@ -179,7 +179,11 @@ function ProductForm() {
           <option value="adire">Adire</option>
           <option value="shoes">Shoes</option>
           <option value="bags">Bags</option>
-          <option value="accessories">Accessories</option>
+          <option value="accessories">Accessories (general)</option>
+          <option value="school-bags">School Bags</option>
+          <option value="watches">Watches</option>
+          <option value="belts">Belts</option>
+          <option value="sunglasses">Sunglasses</option>
         </select>
 
         <div>

@@ -100,7 +100,7 @@ function CategoryPage() {
       {filteredProducts.length === 0 ? (
         <p className="text-gray-500">No products found matching your filters.</p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 min-[321px]:grid-cols-2 gap-3 sm:grid-cols-2 md:grid-cols-4 gap-6 font-epilogue">
           {filteredProducts.map((product) => (
             <ProductCard key={product._id} product={product} />
           ))}

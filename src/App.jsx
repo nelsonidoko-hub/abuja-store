@@ -17,6 +17,8 @@ import AdminOrders from './pages/admin/AdminOrders'
 import AdminCustomers from './pages/admin/AdminCustomers'
 import SearchResults from './pages/SearchResults'
 import Shop from './pages/Shop'
+import MyOrders from './pages/MyOrders'
+import OrderDetail from './pages/OrderDetail'
 
 function App() {
   return (
@@ -40,6 +42,8 @@ function App() {
         <Route path="/admin/customers" element={<AdminRoute><AdminCustomers /></AdminRoute>} />
         <Route path="/search" element={<SearchResults />} />
         <Route path="/shop" element={<Shop />} />
+        <Route path="/orders" element={<MyOrders />} />
+        <Route path="/orders/:id" element={<OrderDetail />} />
       </Routes>
     </div>
   )
