@@ -1,8 +1,8 @@
 import axios from 'axios'
 
-// const API_URL = 'https://abuja-store-backend.onrender.com/api/products'
+const API_URL = 'https://abuja-store-backend.onrender.com/api/products'
 
-const API_URL = `${import.meta.env.VITE_API_URL}/api/products`
+
 
 const authHeader = (token) => ({
   headers: { Authorization: `Bearer ${token}` },
