@@ -7,6 +7,7 @@ function AdminCustomers() {
   const { user } = useAuth()
   const [customers, setCustomers] = useState([])
   const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState('')
   const [selectedCustomer, setSelectedCustomer] = useState(null)
   const [customerOrders, setCustomerOrders] = useState([])
   const [ordersLoading, setOrdersLoading] = useState(false)
@@ -16,20 +17,50 @@ function AdminCustomers() {
   }, [])
 
   async function loadCustomers() {
-    const data = await getAllCustomers(user.token)
-    setCustomers(data)
-    setLoading(false)
+    setLoadError('')
+    try {
+      const data = await getAllCustomers(user.token)
+      setCustomers(Array.isArray(data) ? data : [])
+    } catch (err) {
+      console.error(err)
+      setLoadError(err.response?.data?.message || 'Could not load customers')
+      setCustomers([])
+    } finally {
+      setLoading(false)
+    }
   }
 
   async function viewCustomer(customer) {
     setSelectedCustomer(customer)
     setOrdersLoading(true)
-    const orders = await getOrdersByUserId(customer._id, user.token)
-    setCustomerOrders(orders)
-    setOrdersLoading(false)
+    try {
+      const orders = await getOrdersByUserId(customer._id, user.token)
+      setCustomerOrders(Array.isArray(orders) ? orders : [])
+    } catch (err) {
+      console.error(err)
+      setCustomerOrders([])
+    } finally {
+      setOrdersLoading(false)
+    }
   }
 
   if (loading) return <p className="p-6">Loading customers...</p>
+
+  if (loadError) {
+    return (
+      <div className="p-6">
+        <p className="text-red-600 bg-red-50 border border-red-200 rounded-md p-4 text-sm">
+          {loadError}
+        </p>
+        <button
+          onClick={loadCustomers}
+          className="mt-3 text-sm text-blue-600 hover:underline"
+        >
+          Try again
+        </button>
+      </div>
+    )
+  }
 
   if (selectedCustomer) {
     const totalSpent = customerOrders
@@ -102,7 +133,7 @@ function AdminCustomers() {
   }
 
   return (
-    <div className="p-6 mt-300">
+    <div className="p-6">
       <h2 className="text-2xl font-bold mb-6">Customers</h2>
 
       <div className="border rounded-lg overflow-hidden">

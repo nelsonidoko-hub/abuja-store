@@ -13,6 +13,7 @@ import {
   ArrowRightIcon,
   UserIcon,
   ChevronRightIcon,
+  ClipboardDocumentListIcon,
 } from '@heroicons/react/24/outline'
 
 function Navbar() {
@@ -41,7 +42,7 @@ function Navbar() {
     { name: 'bags', dropdown: null },
     { name: 'shoes', dropdown: null },
     { name: 'adire', dropdown: null },
-    { name: 'accessories', dropdown: ['school-bags','watches', 'belts', 'sunglasses'] },
+    { name: 'accessories', dropdown: ['school-bags', 'watches', 'belts', 'sunglasses'] },
   ]
 
   const isHomePage = location.pathname === '/'
@@ -146,50 +147,19 @@ function Navbar() {
           )}
 
           {user && (
-            <Link to="/orders" className={`capitalize font-poppins hover:text-blue-600 ${textColor} font-medium tracking-wide whitespace-nowrap`}>
+            <Link
+              to="/orders"
+              className={`capitalize font-poppins hover:text-blue-600 ${textColor} font-medium tracking-wide whitespace-nowrap`}
+            >
               Orders
             </Link>
           )}
 
-          
-          {/* search start */}
-          <button onClick={() => setIsSearchOpen(!isSearchOpen)}>
+          {/* search button */}
+          <button onClick={() => setIsSearchOpen(true)}>
             <MagnifyingGlassIcon className={`h-5 w-5 ${textColor}`} />
           </button>
 
-          {isSearchOpen && (
-          <div
-            className="fixed inset-0 bg-black/40 z-[60] flex items-start justify-center pt-24 px-4"
-            onClick={() => setIsSearchOpen(false)}
-          >
-            <form
-              onSubmit={handleSearchSubmit}
-              onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-lg p-4 w-full max-w-md flex gap-2"
-            >
-              <input
-                type="text"
-                autoFocus
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search products..."
-                className="flex-1 min-w-0 border border-gray-300 rounded-md px-3 py-2 bg-white text-gray-900 placeholder:text-gray-400"
-              />
-              <button type="submit" className="bg-gray-900 text-white px-4 py-2 rounded-md">
-                Search
-              </button>
-              <button
-                type="button"
-                onClick={() => setIsSearchOpen(false)}
-                className="text-gray-500 px-2"
-              >
-                ✕
-              </button>
-            </form>
-          </div>
-          )}
-
-          {/* search ends */}
           <button
             onClick={toggleCart}
             className={`flex items-center gap-1 capitalize font-poppins hover:text-blue-600 ${textColor} font-medium tracking-wide transition-colors whitespace-nowrap`}
@@ -220,7 +190,7 @@ function Navbar() {
         </Link>
 
         <div className="flex items-center gap-4">
-          <button className={`p-1 ${textColor}`}>
+          <button onClick={() => setIsSearchOpen(true)} className={`p-1 ${textColor}`}>
             <MagnifyingGlassIcon className="h-5 w-5" />
           </button>
           <button
@@ -253,10 +223,6 @@ function Navbar() {
           </Link>
 
           <div className="flex items-center gap-3">
-            <button onClick={() => setIsSearchOpen(true)} className={`p-1 ${textColor}`}>
-              <MagnifyingGlassIcon className="h-5 w-5" />
-            </button>
-
             <button
               onClick={() => {
                 setIsMenuOpen(false)
@@ -285,6 +251,17 @@ function Navbar() {
 
         {/* Main Category List */}
         <div className="flex-1 overflow-y-auto px-6 py-2 divide-y divide-gray-100">
+          {user && (
+            <Link
+              to="/orders"
+              onClick={() => setIsMenuOpen(false)}
+              className="flex items-center gap-2 py-4 text-base font-medium text-gray-900 hover:text-black transition"
+            >
+              <ClipboardDocumentListIcon className="h-5 w-5" />
+              Track Order
+            </Link>
+          )}
+
           {categories.map((cat) => (
             <div key={cat.name} className="py-4">
               <div className="flex items-center justify-between">
@@ -360,6 +337,39 @@ function Navbar() {
           </div>
         </div>
       </div>
+
+      {/* Search overlay - lives at the top level so it works on every screen size */}
+      {isSearchOpen && (
+        <div
+          className="fixed inset-0 bg-black/40 z-[60] flex items-start justify-center pt-24 px-4"
+          onClick={() => setIsSearchOpen(false)}
+        >
+          <form
+            onSubmit={handleSearchSubmit}
+            onClick={(e) => e.stopPropagation()}
+            className="bg-white rounded-lg p-4 w-full max-w-md flex gap-2"
+          >
+            <input
+              type="text"
+              autoFocus
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search products..."
+              className="flex-1 min-w-0 border border-gray-300 rounded-md px-3 py-2 bg-white text-gray-900 placeholder:text-gray-400"
+            />
+            <button type="submit" className="bg-gray-900 text-white px-4 py-2 rounded-md">
+              Search
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsSearchOpen(false)}
+              className="text-gray-500 px-2"
+            >
+              ✕
+            </button>
+          </form>
+        </div>
+      )}
     </nav>
   )
 }

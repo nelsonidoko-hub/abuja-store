@@ -28,9 +28,15 @@ function AdminOrders() {
   }, [])
 
   async function loadOrders() {
-    const data = await getAllOrders(user.token)
-    setOrders(data)
-    setLoading(false)
+    try {
+      const data = await getAllOrders(user.token)
+      setOrders(Array.isArray(data) ? data : [])
+    } catch (err) {
+      console.error(err)
+      setOrders([])
+    } finally {
+      setLoading(false)
+    }
   }
 
   async function handleStatusChange(orderId, newStatus) {
@@ -128,43 +134,45 @@ function AdminOrders() {
   if (loading) return <p className="p-6">Loading orders...</p>
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6">
       <h2 className="text-2xl font-bold mb-6">Orders</h2>
 
-      {/* Summary cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <div className="border rounded-lg p-4">
-          <p className="text-xs text-gray-500 uppercase">Total Orders</p>
-          <p className="text-2xl font-bold">{orders.length}</p>
+      {/* Summary cards — 2 per row on phones, 4 on larger screens */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-8">
+        <div className="border rounded-lg p-3 sm:p-4">
+          <p className="text-[11px] sm:text-xs text-gray-500 uppercase">Total Orders</p>
+          <p className="text-xl sm:text-2xl font-bold">{orders.length}</p>
         </div>
-        <div className="border rounded-lg p-4">
-          <p className="text-xs text-gray-500 uppercase">Pending</p>
-          <p className="text-2xl font-bold">
+        <div className="border rounded-lg p-3 sm:p-4">
+          <p className="text-[11px] sm:text-xs text-gray-500 uppercase">Pending</p>
+          <p className="text-xl sm:text-2xl font-bold">
             {orders.filter((o) => o.status === 'pending').length}
           </p>
         </div>
-        <div className="border rounded-lg p-4">
-          <p className="text-xs text-gray-500 uppercase">Delivered</p>
-          <p className="text-2xl font-bold">
+        <div className="border rounded-lg p-3 sm:p-4">
+          <p className="text-[11px] sm:text-xs text-gray-500 uppercase">Delivered</p>
+          <p className="text-xl sm:text-2xl font-bold">
             {orders.filter((o) => o.status === 'delivered').length}
           </p>
         </div>
-        <div className="border rounded-lg p-4">
-          <p className="text-xs text-gray-500 uppercase">Revenue</p>
-          <p className="text-2xl font-bold">₦{totalRevenue.toLocaleString()}</p>
+        <div className="border rounded-lg p-3 sm:p-4">
+          <p className="text-[11px] sm:text-xs text-gray-500 uppercase">Revenue</p>
+          <p className="text-xl sm:text-2xl font-bold truncate">
+            ₦{totalRevenue.toLocaleString()}
+          </p>
         </div>
       </div>
 
-      {/* Filter */}
-      <div className="flex gap-2 mb-4 flex-wrap">
+      {/* Filter chips — scroll sideways on mobile instead of wrapping/hiding */}
+      <div className="flex gap-2 mb-4 overflow-x-auto pb-1 -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-none">
         {['all', ...STATUS_OPTIONS].map((s) => (
           <button
             key={s}
             onClick={() => setFilterStatus(s)}
             className={
               filterStatus === s
-                ? 'px-3 py-1 rounded-full text-sm bg-gray-900 text-white capitalize'
-                : 'px-3 py-1 rounded-full text-sm bg-gray-100 text-gray-700 capitalize hover:bg-gray-200'
+                ? 'shrink-0 px-3 py-1 rounded-full text-sm bg-gray-900 text-white capitalize'
+                : 'shrink-0 px-3 py-1 rounded-full text-sm bg-gray-100 text-gray-700 capitalize hover:bg-gray-200'
             }
           >
             {s}
@@ -172,233 +180,243 @@ function AdminOrders() {
         ))}
       </div>
 
-      {/* Orders table */}
+      {/* Orders table — scrolls horizontally instead of hiding/squeezing columns */}
       <div className="border rounded-lg overflow-hidden">
-        <table className="w-full text-sm">
-          <thead className="bg-gray-50 text-left">
-            <tr>
-              <th className="p-3">Order ID</th>
-              <th className="p-3">Customer</th>
-              <th className="p-3">Date</th>
-              <th className="p-3">Delivery</th>
-              <th className="p-3">Total</th>
-              <th className="p-3">Payment</th>
-              <th className="p-3">Status</th>
-              <th className="p-3"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredOrders.map((order) => {
-              const isPickup = order.deliveryMethod === 'pickup'
-              const draft = getDraft(order)
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm min-w-[720px]">
+            <thead className="bg-gray-50 text-left">
+              <tr>
+                <th className="p-3 whitespace-nowrap">Order ID</th>
+                <th className="p-3 whitespace-nowrap">Customer</th>
+                <th className="p-3 whitespace-nowrap">Date</th>
+                <th className="p-3 whitespace-nowrap">Delivery</th>
+                <th className="p-3 whitespace-nowrap">Total</th>
+                <th className="p-3 whitespace-nowrap">Payment</th>
+                <th className="p-3 whitespace-nowrap">Status</th>
+                <th className="p-3"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredOrders.map((order) => {
+                const isPickup = order.deliveryMethod === 'pickup'
+                const draft = getDraft(order)
 
-              return (
-                <>
-                  <tr key={order._id} className="border-t">
-                    <td className="p-3 font-mono text-xs">{order._id.slice(-8)}</td>
-                    <td className="p-3">
-                      <p className="font-medium">{order.user?.name}</p>
-                      <p className="text-gray-500 text-xs">{order.user?.email}</p>
-                    </td>
-                    <td className="p-3">{new Date(order.createdAt).toLocaleDateString()}</td>
-                    <td className="p-3">
-                      <span
-                        className={
-                          isPickup
-                            ? 'text-xs px-2 py-1 rounded-full bg-indigo-100 text-indigo-800 capitalize'
-                            : 'text-xs px-2 py-1 rounded-full bg-sky-100 text-sky-800 capitalize'
-                        }
-                      >
-                        {isPickup ? 'Pickup' : 'Ship'}
-                      </span>
-                    </td>
-                    <td className="p-3 font-semibold">₦{order.totalPrice.toLocaleString()}</td>
-                    <td className="p-3">
-                      <span
-                        className={
-                          order.isPaid
-                            ? 'text-xs px-2 py-1 rounded-full bg-green-100 text-green-800'
-                            : 'text-xs px-2 py-1 rounded-full bg-red-100 text-red-800'
-                        }
-                      >
-                        {order.isPaid ? 'Paid' : 'Unpaid'}
-                      </span>
-                    </td>
-                    <td className="p-3">
-                      <select
-                        value={order.status}
-                        onChange={(e) => handleStatusChange(order._id, e.target.value)}
-                        className={`text-xs rounded-md px-2 py-1 capitalize border-0 ${STATUS_COLORS[order.status]}`}
-                      >
-                        {STATUS_OPTIONS.map((s) => (
-                          <option key={s} value={s}>
-                            {s}
-                          </option>
-                        ))}
-                      </select>
-                    </td>
-                    <td className="p-3">
-                      <button
-                        onClick={() => setExpandedId(expandedId === order._id ? null : order._id)}
-                        className="text-blue-600 hover:underline text-xs"
-                      >
-                        {expandedId === order._id ? 'Hide' : 'View'}
-                      </button>
-                    </td>
-                  </tr>
+                return (
+                  <>
+                    <tr key={order._id} className="border-t">
+                      <td className="p-3 font-mono text-xs whitespace-nowrap">
+                        {order._id.slice(-8)}
+                      </td>
+                      <td className="p-3 whitespace-nowrap">
+                        <p className="font-medium">{order.user?.name}</p>
+                        <p className="text-gray-500 text-xs">{order.user?.email}</p>
+                      </td>
+                      <td className="p-3 whitespace-nowrap">
+                        {new Date(order.createdAt).toLocaleDateString()}
+                      </td>
+                      <td className="p-3 whitespace-nowrap">
+                        <span
+                          className={
+                            isPickup
+                              ? 'text-xs px-2 py-1 rounded-full bg-indigo-100 text-indigo-800 capitalize'
+                              : 'text-xs px-2 py-1 rounded-full bg-sky-100 text-sky-800 capitalize'
+                          }
+                        >
+                          {isPickup ? 'Pickup' : 'Ship'}
+                        </span>
+                      </td>
+                      <td className="p-3 font-semibold whitespace-nowrap">
+                        ₦{order.totalPrice.toLocaleString()}
+                      </td>
+                      <td className="p-3 whitespace-nowrap">
+                        <span
+                          className={
+                            order.isPaid
+                              ? 'text-xs px-2 py-1 rounded-full bg-green-100 text-green-800'
+                              : 'text-xs px-2 py-1 rounded-full bg-red-100 text-red-800'
+                          }
+                        >
+                          {order.isPaid ? 'Paid' : 'Unpaid'}
+                        </span>
+                      </td>
+                      <td className="p-3 whitespace-nowrap">
+                        <select
+                          value={order.status}
+                          onChange={(e) => handleStatusChange(order._id, e.target.value)}
+                          className={`text-xs rounded-md px-2 py-1 capitalize border-0 ${STATUS_COLORS[order.status]}`}
+                        >
+                          {STATUS_OPTIONS.map((s) => (
+                            <option key={s} value={s}>
+                              {s}
+                            </option>
+                          ))}
+                        </select>
+                      </td>
+                      <td className="p-3 whitespace-nowrap">
+                        <button
+                          onClick={() => setExpandedId(expandedId === order._id ? null : order._id)}
+                          className="text-blue-600 hover:underline text-xs"
+                        >
+                          {expandedId === order._id ? 'Hide' : 'View'}
+                        </button>
+                      </td>
+                    </tr>
 
-                  {expandedId === order._id && (
-                    <tr className="border-t bg-gray-50">
-                      <td colSpan={8} className="p-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                          <div>
-                            <h4 className="font-semibold text-sm mb-2">
-                              {isPickup ? 'Pickup Details' : 'Shipping Address'}
-                            </h4>
+                    {expandedId === order._id && (
+                      <tr className="border-t bg-gray-50">
+                        <td colSpan={8} className="p-4">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                              <h4 className="font-semibold text-sm mb-2">
+                                {isPickup ? 'Pickup Details' : 'Shipping Address'}
+                              </h4>
 
-                            {isPickup ? (
-                              <>
-                                <p className="text-sm text-gray-700">
-                                  {order.shippingAddress?.pickupType || 'Store Pickup'}
-                                </p>
-                                <p className="text-sm text-gray-700">
-                                  {order.shippingAddress?.location}
-                                </p>
-                                <p className="text-sm text-gray-700">{order.shippingAddress?.phone}</p>
-
-                                {order.tracking?.readyForPickupAt ? (
-                                  <p className="text-xs text-green-700 mt-2 font-medium">
-                                    Ready since{' '}
-                                    {new Date(order.tracking.readyForPickupAt).toLocaleString()}
+                              {isPickup ? (
+                                <>
+                                  <p className="text-sm text-gray-700">
+                                    {order.shippingAddress?.pickupType || 'Store Pickup'}
                                   </p>
-                                ) : (
-                                  <p className="text-xs text-gray-500 mt-2">Not yet marked ready</p>
-                                )}
-                              </>
+                                  <p className="text-sm text-gray-700">
+                                    {order.shippingAddress?.location}
+                                  </p>
+                                  <p className="text-sm text-gray-700">{order.shippingAddress?.phone}</p>
+
+                                  {order.tracking?.readyForPickupAt ? (
+                                    <p className="text-xs text-green-700 mt-2 font-medium">
+                                      Ready since{' '}
+                                      {new Date(order.tracking.readyForPickupAt).toLocaleString()}
+                                    </p>
+                                  ) : (
+                                    <p className="text-xs text-gray-500 mt-2">Not yet marked ready</p>
+                                  )}
+                                </>
+                              ) : (
+                                <>
+                                  <p className="text-sm text-gray-700">{order.shippingAddress?.address}</p>
+                                  <p className="text-sm text-gray-700">{order.shippingAddress?.city}</p>
+                                  <p className="text-sm text-gray-700">{order.shippingAddress?.phone}</p>
+                                </>
+                              )}
+                            </div>
+
+                            <div>
+                              <h4 className="font-semibold text-sm mb-2">Items</h4>
+                              <div className="space-y-2">
+                                {order.items.map((item, i) => (
+                                  <div key={i} className="flex items-center gap-3 text-sm">
+                                    <img
+                                      src={item.image}
+                                      alt={item.name}
+                                      className="w-10 h-10 object-cover rounded shrink-0"
+                                    />
+                                    <div className="flex-1 min-w-0">
+                                      <p className="truncate">
+                                        {item.name} ({item.size})
+                                      </p>
+                                      <p className="text-gray-500 text-xs">
+                                        Qty: {item.quantity} × ₦{item.price.toLocaleString()}
+                                      </p>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Tracking panel — branches by delivery method */}
+                          <div className="mt-6 border-t pt-4">
+                            {isPickup ? (
+                              <div>
+                                <h4 className="font-semibold text-sm mb-2">Pickup Tracker</h4>
+                                <div className="flex flex-col gap-2 max-w-md">
+                                  <textarea
+                                    placeholder="Note for the customer (e.g. 'Ask for Ada at the counter')"
+                                    value={draft.pickupNote}
+                                    onChange={(e) =>
+                                      updateDraft(order._id, 'pickupNote', e.target.value)
+                                    }
+                                    rows={2}
+                                    className="border rounded-md p-2 text-sm w-full"
+                                  />
+                                  <button
+                                    onClick={() => handleMarkReadyForPickup(order)}
+                                    disabled={savingTrackingId === order._id}
+                                    className="bg-indigo-600 text-white text-sm py-2 rounded-md hover:bg-indigo-700 disabled:opacity-50 w-full sm:w-fit px-4"
+                                  >
+                                    {savingTrackingId === order._id
+                                      ? 'Saving...'
+                                      : 'Mark Ready for Pickup'}
+                                  </button>
+                                </div>
+                              </div>
                             ) : (
-                              <>
-                                <p className="text-sm text-gray-700">{order.shippingAddress?.address}</p>
-                                <p className="text-sm text-gray-700">{order.shippingAddress?.city}</p>
-                                <p className="text-sm text-gray-700">{order.shippingAddress?.phone}</p>
-                              </>
+                              <div>
+                                <h4 className="font-semibold text-sm mb-2">Shipping Tracker</h4>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-w-xl">
+                                  <input
+                                    placeholder="Courier (e.g. GIG Logistics)"
+                                    value={draft.courier}
+                                    onChange={(e) => updateDraft(order._id, 'courier', e.target.value)}
+                                    className="border rounded-md p-2 text-sm w-full"
+                                  />
+                                  <input
+                                    placeholder="Tracking number"
+                                    value={draft.trackingNumber}
+                                    onChange={(e) =>
+                                      updateDraft(order._id, 'trackingNumber', e.target.value)
+                                    }
+                                    className="border rounded-md p-2 text-sm w-full"
+                                  />
+                                  <input
+                                    placeholder="Tracking URL"
+                                    value={draft.trackingUrl}
+                                    onChange={(e) =>
+                                      updateDraft(order._id, 'trackingUrl', e.target.value)
+                                    }
+                                    className="border rounded-md p-2 text-sm w-full sm:col-span-2"
+                                  />
+                                  <input
+                                    placeholder="Rider phone"
+                                    value={draft.riderPhone}
+                                    onChange={(e) =>
+                                      updateDraft(order._id, 'riderPhone', e.target.value)
+                                    }
+                                    className="border rounded-md p-2 text-sm w-full"
+                                  />
+                                  <input
+                                    type="date"
+                                    value={draft.estimatedDelivery}
+                                    onChange={(e) =>
+                                      updateDraft(order._id, 'estimatedDelivery', e.target.value)
+                                    }
+                                    className="border rounded-md p-2 text-sm w-full"
+                                  />
+                                </div>
+                                <button
+                                  onClick={() => handleSaveShippingTracking(order)}
+                                  disabled={savingTrackingId === order._id}
+                                  className="mt-2 bg-sky-600 text-white text-sm py-2 px-4 rounded-md hover:bg-sky-700 disabled:opacity-50 w-full sm:w-fit"
+                                >
+                                  {savingTrackingId === order._id ? 'Saving...' : 'Save Tracking Info'}
+                                </button>
+                              </div>
                             )}
                           </div>
 
-                          <div>
-                            <h4 className="font-semibold text-sm mb-2">Items</h4>
-                            <div className="space-y-2">
-                              {order.items.map((item, i) => (
-                                <div key={i} className="flex items-center gap-3 text-sm">
-                                  <img
-                                    src={item.image}
-                                    alt={item.name}
-                                    className="w-10 h-10 object-cover rounded"
-                                  />
-                                  <div className="flex-1">
-                                    <p>{item.name} ({item.size})</p>
-                                    <p className="text-gray-500 text-xs">
-                                      Qty: {item.quantity} × ₦{item.price.toLocaleString()}
-                                    </p>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Tracking panel — branches by delivery method */}
-                        <div className="mt-6 border-t pt-4">
-                          {isPickup ? (
-                            <div>
-                              <h4 className="font-semibold text-sm mb-2">Pickup Tracker</h4>
-                              <div className="flex flex-col gap-2 max-w-md">
-                                <textarea
-                                  placeholder="Note for the customer (e.g. 'Ask for Ada at the counter')"
-                                  value={draft.pickupNote}
-                                  onChange={(e) =>
-                                    updateDraft(order._id, 'pickupNote', e.target.value)
-                                  }
-                                  rows={2}
-                                  className="border rounded-md p-2 text-sm"
-                                />
-                                <button
-                                  onClick={() => handleMarkReadyForPickup(order)}
-                                  disabled={savingTrackingId === order._id}
-                                  className="bg-indigo-600 text-white text-sm py-2 rounded-md hover:bg-indigo-700 disabled:opacity-50 w-fit px-4"
-                                >
-                                  {savingTrackingId === order._id
-                                    ? 'Saving...'
-                                    : 'Mark Ready for Pickup'}
-                                </button>
-                              </div>
-                            </div>
-                          ) : (
-                            <div>
-                              <h4 className="font-semibold text-sm mb-2">Shipping Tracker</h4>
-                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-w-xl">
-                                <input
-                                  placeholder="Courier (e.g. GIG Logistics)"
-                                  value={draft.courier}
-                                  onChange={(e) => updateDraft(order._id, 'courier', e.target.value)}
-                                  className="border rounded-md p-2 text-sm"
-                                />
-                                <input
-                                  placeholder="Tracking number"
-                                  value={draft.trackingNumber}
-                                  onChange={(e) =>
-                                    updateDraft(order._id, 'trackingNumber', e.target.value)
-                                  }
-                                  className="border rounded-md p-2 text-sm"
-                                />
-                                <input
-                                  placeholder="Tracking URL"
-                                  value={draft.trackingUrl}
-                                  onChange={(e) =>
-                                    updateDraft(order._id, 'trackingUrl', e.target.value)
-                                  }
-                                  className="border rounded-md p-2 text-sm sm:col-span-2"
-                                />
-                                <input
-                                  placeholder="Rider phone"
-                                  value={draft.riderPhone}
-                                  onChange={(e) =>
-                                    updateDraft(order._id, 'riderPhone', e.target.value)
-                                  }
-                                  className="border rounded-md p-2 text-sm"
-                                />
-                                <input
-                                  type="date"
-                                  value={draft.estimatedDelivery}
-                                  onChange={(e) =>
-                                    updateDraft(order._id, 'estimatedDelivery', e.target.value)
-                                  }
-                                  className="border rounded-md p-2 text-sm"
-                                />
-                              </div>
-                              <button
-                                onClick={() => handleSaveShippingTracking(order)}
-                                disabled={savingTrackingId === order._id}
-                                className="mt-2 bg-sky-600 text-white text-sm py-2 px-4 rounded-md hover:bg-sky-700 disabled:opacity-50"
-                              >
-                                {savingTrackingId === order._id ? 'Saving...' : 'Save Tracking Info'}
-                              </button>
-                            </div>
+                          {order.paymentReference && (
+                            <p className="text-xs text-gray-400 mt-4">
+                              Payment ref: {order.paymentReference}
+                            </p>
                           )}
-                        </div>
-
-                        {order.paymentReference && (
-                          <p className="text-xs text-gray-400 mt-4">
-                            Payment ref: {order.paymentReference}
-                          </p>
-                        )}
-                      </td>
-                    </tr>
-                  )}
-                </>
-              )
-            })}
-          </tbody>
-        </table>
+                        </td>
+                      </tr>
+                    )}
+                  </>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
 
         {filteredOrders.length === 0 && (
           <p className="p-6 text-center text-gray-500">No orders in this category.</p>

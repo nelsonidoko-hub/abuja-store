@@ -1,14 +1,14 @@
 import { Routes, Route } from 'react-router-dom'
-import Navbar from './components/Navbar'
+import PublicLayout from './components/PublicLayout'
 import Home from './pages/Home'
 import CategoryPage from './pages/CategoryPage'
 import ProductDetail from './pages/ProductDetail'
-import Cart from './pages/Cart'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Checkout from './pages/Checkout'
 import PaymentSuccess from './pages/PaymentSuccess'
 import AdminRoute from './components/AdminRoute'
+import AdminLayout from './pages/admin/AdminLayout'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminRegister from './pages/admin/AdminRegister'
 import AdminProducts from './pages/admin/AdminProducts'
@@ -22,10 +22,9 @@ import OrderDetail from './pages/OrderDetail'
 
 function App() {
   return (
-    <div>
-      <Navbar />
-      <Cart />
-      <Routes>
+    <Routes>
+      {/* Public storefront — Navbar + Cart render once via PublicLayout */}
+      <Route element={<PublicLayout />}>
         <Route path="/" element={<Home />} />
         <Route path="/category/:categoryName" element={<CategoryPage />} />
         <Route path="/product/:productId" element={<ProductDetail />} />
@@ -33,19 +32,33 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/payment-success" element={<PaymentSuccess />} />
-        <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
-        <Route path="/admin/products" element={<AdminRoute><AdminProducts /></AdminRoute>} />
-        <Route path="/admin/products/new" element={<AdminRoute><ProductForm /></AdminRoute>} />
-        <Route path="/admin/products/:id/edit" element={<AdminRoute><ProductForm /></AdminRoute>} />
-        <Route path="/admin/orders" element={<AdminRoute><AdminOrders /></AdminRoute>} />
-        <Route path="/admin/setup" element={<AdminRegister />} />
-        <Route path="/admin/customers" element={<AdminRoute><AdminCustomers /></AdminRoute>} />
         <Route path="/search" element={<SearchResults />} />
         <Route path="/shop" element={<Shop />} />
         <Route path="/orders" element={<MyOrders />} />
         <Route path="/orders/:id" element={<OrderDetail />} />
-      </Routes>
-    </div>
+      </Route>
+
+      {/* Admin — AdminLayout provides its own sidebar, no storefront Navbar.
+          AdminRoute guards the whole section once instead of on every page. */}
+      <Route
+        path="/admin"
+        element={
+          <AdminRoute>
+            <AdminLayout />
+          </AdminRoute>
+        }
+      >
+        <Route index element={<AdminDashboard />} />
+        <Route path="products" element={<AdminProducts />} />
+        <Route path="products/new" element={<ProductForm />} />
+        <Route path="products/:id/edit" element={<ProductForm />} />
+        <Route path="orders" element={<AdminOrders />} />
+        <Route path="customers" element={<AdminCustomers />} />
+      </Route>
+
+      {/* Standalone — first-admin setup, intentionally outside both layouts */}
+      <Route path="/admin/setup" element={<AdminRegister />} />
+    </Routes>
   )
 }
 

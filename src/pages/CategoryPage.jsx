@@ -2,6 +2,8 @@ import { useParams } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import ProductCard from '../components/ProductCard'
 import { getProductsByCategory } from '../services/productService'
+import FeaturedCollection from '../components/FeaturedCollection'
+import slide from '../assets/img/slide-2.png'
 
 function CategoryPage() {
   const { categoryName } = useParams()
@@ -56,7 +58,7 @@ function CategoryPage() {
   }
 
   return (
-    <div className="px-6 md:px-10 py-8">
+    <div className="px-6 pt-18 md:px-10 py-8 font-poppins sm:pt-28">
       <h2 className="text-2xl font-bold mb-6 capitalize">{categoryName}</h2>
 
       {/* Filter bar */}
@@ -106,6 +108,16 @@ function CategoryPage() {
           ))}
         </div>
       )}
+
+      <FeaturedCollection
+        products={products.slice(0, 4)}
+        image={slide}
+        title="KIDS ROCKING COLLECTION"
+        buttonText="VIEW"
+        buttonLink="/shop"
+      />
+
+      {/* <Footer /> */}
     </div>
   )
 }
