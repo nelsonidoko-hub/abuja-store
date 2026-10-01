@@ -96,7 +96,7 @@ function Checkout() {
                 phone,
               }
             : {
-                type: 'Store Pickup',
+                method: 'Store Pickup',
                 location: 'Main Retail Store Branch',
                 phone,
               },

@@ -3,6 +3,20 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { getProductById, createProduct, updateProduct } from '../../services/productService'
 import { uploadImage } from '../../services/uploadService'
+import {
+  PhotoIcon,
+  ArrowUpTrayIcon,
+  XCircleIcon,
+  TagIcon,
+  CurrencyDollarIcon,
+  Squares2X2Icon,
+  DocumentTextIcon,
+  SparklesIcon,
+  FireIcon,
+  PlusCircleIcon,
+  TrashIcon,
+  InformationCircleIcon,
+} from '@heroicons/react/24/outline'
 
 function ProductForm() {
   const { id } = useParams()
@@ -25,6 +39,7 @@ function ProductForm() {
   })
   const [error, setError] = useState('')
   const [uploading, setUploading] = useState(false)
+  const [hoverUploading, setHoverUploading] = useState(false)
   const [galleryUploading, setGalleryUploading] = useState(false)
 
   useEffect(() => {
@@ -79,14 +94,14 @@ function ProductForm() {
     const file = e.target.files[0]
     if (!file) return
 
-    setUploading(true)
+    setHoverUploading(true)
     try {
       const url = await uploadImage(file, user.token)
       setForm((prev) => ({ ...prev, hoverImage: url }))
     } catch (err) {
       setError('Image upload failed')
     } finally {
-      setUploading(false)
+      setHoverUploading(false)
     }
   }
 
@@ -142,95 +157,205 @@ function ProductForm() {
   }
 
   return (
-    <div className="max-w-md pt-30">
-      <h2 className="text-2xl font-bold mb-6">{isEditMode ? 'Edit' : 'Add'} Product</h2>
+    <div className="max-w-xl pt-30 pb-16">
+      <h2 className="text-2xl font-bold mb-1">{isEditMode ? 'Edit' : 'Add'} Product</h2>
+      <p className="text-sm text-gray-500 mb-6">
+        Fill in the details below. Fields marked with an icon show what kind of info goes there.
+      </p>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <input
-          name="name"
-          placeholder="Name"
-          value={form.name}
-          onChange={handleChange}
-          required
-          className="border rounded-md p-2"
-        />
+      <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+        {/* Basic info */}
+        <div className="border rounded-lg p-4">
+          <div className="flex items-center gap-2 mb-3 text-gray-700">
+            <TagIcon className="h-5 w-5" />
+            <h3 className="font-semibold text-sm">Product Info</h3>
+          </div>
 
-        <input
-          name="price"
-          type="number"
-          placeholder="Price"
-          value={form.price}
-          onChange={handleChange}
-          required
-          className="border rounded-md p-2"
-        />
+          <div className="flex flex-col gap-3">
+            <div>
+              <label className="text-xs text-gray-500 block mb-1">Product Name</label>
+              <input
+                name="name"
+                placeholder="e.g. Ankara Print Tote Bag"
+                value={form.name}
+                onChange={handleChange}
+                required
+                className="border rounded-md p-2 w-full"
+              />
+            </div>
 
-        <select
-          name="category"
-          value={form.category}
-          onChange={handleChange}
-          required
-          className="border rounded-md p-2"
-        >
-          <option value="">Select category</option>
-          <option value="women">Women</option>
-          <option value="kids">Kids</option>
-          <option value="clothes">Clothes</option>
-          <option value="adire">Adire</option>
-          <option value="shoes">Shoes</option>
-          <option value="bags">Bags</option>
-          <option value="accessories">Accessories (general)</option>
-          <option value="school-bags">School Bags</option>
-          <option value="watches">Watches</option>
-          <option value="belts">Belts</option>
-          <option value="sunglasses">Sunglasses</option>
-        </select>
+            <div>
+              <label className="text-xs text-gray-500 flex items-center gap-1 mb-1">
+                <CurrencyDollarIcon className="h-4 w-4" /> Price (₦)
+              </label>
+              <input
+                name="price"
+                type="number"
+                placeholder="e.g. 15000"
+                value={form.price}
+                onChange={handleChange}
+                required
+                className="border rounded-md p-2 w-full"
+              />
+            </div>
 
-        <div>
-          <label className="text-sm text-gray-600 block mb-1">Main Image</label>
-          <input type="file" accept="image/*" onChange={handleImageUpload} />
-          {uploading && <p className="text-sm text-gray-500">Uploading...</p>}
-          {form.image && (
-            <img src={form.image} alt="Preview" className="w-24 h-24 object-cover mt-2 rounded" />
-          )}
+            <div>
+              <label className="text-xs text-gray-500 block mb-1">Category</label>
+              <select
+                name="category"
+                value={form.category}
+                onChange={handleChange}
+                required
+                className="border rounded-md p-2 w-full"
+              >
+                <option value="">Select category</option>
+                <option value="women">Women</option>
+                <option value="kids">Kids</option>
+                <option value="clothes">Clothes</option>
+                <option value="adire">Adire</option>
+                <option value="shoes">Shoes</option>
+                <option value="bags">Bags</option>
+                <option value="accessories">Accessories (general)</option>
+                <option value="school-bags">School Bags</option>
+                <option value="watches">Watches</option>
+                <option value="belts">Belts</option>
+                <option value="sunglasses">Sunglasses</option>
+              </select>
+            </div>
+          </div>
         </div>
 
-        <div>
-          <label className="text-sm text-gray-600 block mb-1">Back/Hover Image (optional)</label>
-          <input type="file" accept="image/*" onChange={handleHoverImageUpload} />
-          {form.hoverImage && (
-            <img src={form.hoverImage} alt="Hover preview" className="w-24 h-24 object-cover mt-2 rounded" />
-          )}
-        </div>
+        {/* Images */}
+        <div className="border rounded-lg p-4">
+          <div className="flex items-center gap-2 mb-1 text-gray-700">
+            <PhotoIcon className="h-5 w-5" />
+            <h3 className="font-semibold text-sm">Product Photos</h3>
+          </div>
+          <p className="text-xs text-gray-500 mb-4 flex items-start gap-1">
+            <InformationCircleIcon className="h-4 w-4 shrink-0 mt-0.5" />
+            Click any box below to choose a photo from your device.
+          </p>
 
-        <div>
-          <label className="text-sm text-gray-600 block mb-1">
-            Gallery Images (optional — other angles, colors, etc.)
-          </label>
-          <input type="file" accept="image/*" multiple onChange={handleGalleryUpload} />
-          {galleryUploading && <p className="text-sm text-gray-500">Uploading...</p>}
-          {form.images.length > 0 && (
-            <div className="flex flex-wrap gap-2 mt-2">
+          {/* Main image */}
+          <div className="mb-5">
+            <label className="text-xs font-medium text-gray-600 block mb-2">
+              Main Photo <span className="text-red-500">*</span>
+              <span className="text-gray-400 font-normal"> — shown first in the shop</span>
+            </label>
+
+            {form.image ? (
+              <div className="relative w-28 h-28">
+                <img
+                  src={form.image}
+                  alt="Main preview"
+                  className="w-28 h-28 object-cover rounded-lg border"
+                />
+                <label className="absolute -bottom-2 -right-2 bg-white border rounded-full p-1.5 shadow cursor-pointer hover:bg-gray-50">
+                  <ArrowUpTrayIcon className="h-4 w-4 text-gray-600" />
+                  <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+                </label>
+              </div>
+            ) : (
+              <label className="flex flex-col items-center justify-center w-28 h-28 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-400 hover:bg-blue-50/50 transition">
+                <PhotoIcon className="h-7 w-7 text-gray-400 mb-1" />
+                <span className="text-[11px] text-gray-500 text-center px-1">Click to upload</span>
+                <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+              </label>
+            )}
+            {uploading && (
+              <p className="text-xs text-blue-600 mt-1 flex items-center gap-1">
+                <ArrowUpTrayIcon className="h-3 w-3 animate-bounce" /> Uploading...
+              </p>
+            )}
+          </div>
+
+          {/* Hover image */}
+          <div className="mb-5">
+            <label className="text-xs font-medium text-gray-600 block mb-2">
+              Back / Hover Photo
+              <span className="text-gray-400 font-normal"> — optional, shows when a shopper hovers</span>
+            </label>
+
+            {form.hoverImage ? (
+              <div className="relative w-28 h-28">
+                <img
+                  src={form.hoverImage}
+                  alt="Hover preview"
+                  className="w-28 h-28 object-cover rounded-lg border"
+                />
+                <label className="absolute -bottom-2 -right-2 bg-white border rounded-full p-1.5 shadow cursor-pointer hover:bg-gray-50">
+                  <ArrowUpTrayIcon className="h-4 w-4 text-gray-600" />
+                  <input type="file" accept="image/*" onChange={handleHoverImageUpload} className="hidden" />
+                </label>
+              </div>
+            ) : (
+              <label className="flex flex-col items-center justify-center w-28 h-28 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-400 hover:bg-blue-50/50 transition">
+                <PhotoIcon className="h-7 w-7 text-gray-400 mb-1" />
+                <span className="text-[11px] text-gray-500 text-center px-1">Click to upload</span>
+                <input type="file" accept="image/*" onChange={handleHoverImageUpload} className="hidden" />
+              </label>
+            )}
+            {hoverUploading && (
+              <p className="text-xs text-blue-600 mt-1 flex items-center gap-1">
+                <ArrowUpTrayIcon className="h-3 w-3 animate-bounce" /> Uploading...
+              </p>
+            )}
+          </div>
+
+          {/* Gallery */}
+          <div>
+            <label className="text-xs font-medium text-gray-600 block mb-2">
+              Gallery Photos
+              <span className="text-gray-400 font-normal"> — optional, other angles or colors, pick many at once</span>
+            </label>
+
+            <div className="flex flex-wrap gap-3">
               {form.images.map((url, index) => (
-                <div key={url} className="relative">
-                  <img src={url} alt={`Gallery ${index + 1}`} className="w-20 h-20 object-cover rounded" />
+                <div key={url} className="relative w-20 h-20">
+                  <img src={url} alt={`Gallery ${index + 1}`} className="w-20 h-20 object-cover rounded-lg border" />
                   <button
                     type="button"
                     onClick={() => removeGalleryImage(index)}
-                    className="absolute -top-2 -right-2 bg-gray-900 text-white w-5 h-5 rounded-full text-xs leading-none flex items-center justify-center"
+                    className="absolute -top-2 -right-2 bg-white rounded-full shadow"
+                    aria-label="Remove image"
                   >
-                    ✕
+                    <XCircleIcon className="h-5 w-5 text-red-500" />
                   </button>
                 </div>
               ))}
+
+              <label className="flex flex-col items-center justify-center w-20 h-20 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-400 hover:bg-blue-50/50 transition">
+                <PlusCircleIcon className="h-6 w-6 text-gray-400" />
+                <span className="text-[10px] text-gray-500 mt-0.5">Add</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleGalleryUpload}
+                  className="hidden"
+                />
+              </label>
             </div>
-          )}
+            {galleryUploading && (
+              <p className="text-xs text-blue-600 mt-2 flex items-center gap-1">
+                <ArrowUpTrayIcon className="h-3 w-3 animate-bounce" /> Uploading...
+              </p>
+            )}
+          </div>
         </div>
 
-        <div>
-          <label className="text-sm text-gray-600 block mb-2">Sizes & Stock</label>
+        {/* Sizes & stock */}
+        <div className="border rounded-lg p-4">
+          <div className="flex items-center gap-2 mb-3 text-gray-700">
+            <Squares2X2Icon className="h-5 w-5" />
+            <h3 className="font-semibold text-sm">Sizes & Stock</h3>
+          </div>
+          <p className="text-xs text-gray-500 mb-3">
+            Add each size you sell and how many are in stock.
+          </p>
+
           {sizeStock.map((row, index) => (
-            <div key={index} className="flex gap-2 mb-2">
+            <div key={index} className="flex gap-2 mb-2 items-center">
               <input
                 placeholder="Size (e.g. M)"
                 value={row.size}
@@ -244,56 +369,88 @@ function ProductForm() {
                 onChange={(e) => handleSizeChange(index, 'stock', e.target.value)}
                 className="border rounded-md p-2 w-24"
               />
-              <button type="button" onClick={() => removeSizeRow(index)} className="text-red-500 px-2">
-                ✕
+              <button
+                type="button"
+                onClick={() => removeSizeRow(index)}
+                className="text-red-500 p-1.5 hover:bg-red-50 rounded"
+                aria-label="Remove size"
+              >
+                <TrashIcon className="h-4 w-4" />
               </button>
             </div>
           ))}
-          <button type="button" onClick={addSizeRow} className="text-blue-600 text-sm hover:underline">
-            + Add size
+          <button
+            type="button"
+            onClick={addSizeRow}
+            className="flex items-center gap-1 text-blue-600 text-sm hover:underline mt-1"
+          >
+            <PlusCircleIcon className="h-4 w-4" /> Add another size
           </button>
         </div>
 
-        <textarea
-          name="description"
-          placeholder="Description"
-          value={form.description}
-          onChange={handleChange}
-          className="border rounded-md p-2"
-        />
-
-        <label className="flex items-center gap-2 text-sm text-gray-700">
-          <input
-            type="checkbox"
-            checked={form.onSale}
-            onChange={(e) => setForm((prev) => ({ ...prev, onSale: e.target.checked }))}
-          />
-          On Sale
-        </label>
-
-        {form.onSale && (
-          <input
-            name="oldPrice"
-            type="number"
-            placeholder="Original price (before discount)"
-            value={form.oldPrice}
+        {/* Description */}
+        <div className="border rounded-lg p-4">
+          <div className="flex items-center gap-2 mb-3 text-gray-700">
+            <DocumentTextIcon className="h-5 w-5" />
+            <h3 className="font-semibold text-sm">Description</h3>
+          </div>
+          <textarea
+            name="description"
+            placeholder="Tell shoppers about the material, fit, and details..."
+            value={form.description}
             onChange={handleChange}
-            className="border rounded-md p-2"
+            rows={4}
+            className="border rounded-md p-2 w-full"
           />
+        </div>
+
+        {/* Sale & Best seller toggles */}
+        <div className="border rounded-lg p-4 flex flex-col gap-3">
+          <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={form.onSale}
+              onChange={(e) => setForm((prev) => ({ ...prev, onSale: e.target.checked }))}
+              className="h-4 w-4"
+            />
+            <FireIcon className="h-4 w-4 text-orange-500" />
+            On Sale
+          </label>
+
+          {form.onSale && (
+            <div className="pl-6">
+              <label className="text-xs text-gray-500 block mb-1">Original price (before discount)</label>
+              <input
+                name="oldPrice"
+                type="number"
+                placeholder="e.g. 20000"
+                value={form.oldPrice}
+                onChange={handleChange}
+                className="border rounded-md p-2 w-full"
+              />
+            </div>
+          )}
+
+          <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={form.bestSeller}
+              onChange={(e) => setForm((prev) => ({ ...prev, bestSeller: e.target.checked }))}
+              className="h-4 w-4"
+            />
+            <SparklesIcon className="h-4 w-4 text-yellow-500" />
+            Best Seller
+          </label>
+        </div>
+
+        {error && (
+          <p className="text-red-500 text-sm bg-red-50 border border-red-200 rounded-md p-3">{error}</p>
         )}
 
-        <label className="flex items-center gap-2 text-sm text-gray-700">
-          <input
-            type="checkbox"
-            checked={form.bestSeller}
-            onChange={(e) => setForm((prev) => ({ ...prev, bestSeller: e.target.checked }))}
-          />
-          Best Seller
-        </label>
-
-        {error && <p className="text-red-500 text-sm">{error}</p>}
-
-        <button type="submit" className="bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700">
+        <button
+          type="submit"
+          className="bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 font-medium"
+        >
           {isEditMode ? 'Update' : 'Create'} Product
         </button>
       </form>
