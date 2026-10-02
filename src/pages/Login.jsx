@@ -53,6 +53,9 @@ function Login() {
           Login
         </button>
       </form>
+      <Link to="/forgot-password" className="text-sm text-blue-600 underline self-end -mt-2">
+        Forgot password?
+      </Link>
 
       <p className="mt-4 text-sm text-gray-600">
         Don't have an account?{' '}

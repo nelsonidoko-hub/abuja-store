@@ -1,5 +1,6 @@
 import { createContext, useContext, useState } from 'react'
-import { loginUser, registerUser } from '../services/authService'
+import { loginUser, registerUser, resetPassword as resetPasswordRequest } from '../services/authService'
+
 
 const AuthContext = createContext()
 
@@ -28,13 +29,19 @@ export function AuthProvider({ children }) {
     localStorage.setItem('user', JSON.stringify(data))
   }
 
+  async function resetPassword(token, password) {
+    const data = await resetPasswordRequest(token, password)
+    setUser(data)
+    localStorage.setItem('user', JSON.stringify(data))
+  }
+
   function logout() {
     setUser(null)
     localStorage.removeItem('user')
   }
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, setUser, loading: false }}>
+    <AuthContext.Provider value={{ user, login, register, logout, setUser, loading: false, resetPassword }}>
       {children}
     </AuthContext.Provider>
   )

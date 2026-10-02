@@ -4,6 +4,8 @@ import Home from './pages/Home'
 import CategoryPage from './pages/CategoryPage'
 import ProductDetail from './pages/ProductDetail'
 import Login from './pages/Login'
+import ForgotPassword from './pages/ForgotPassword'
+import ResetPassword from './pages/ResetPassword'
 import Register from './pages/Register'
 import Checkout from './pages/Checkout'
 import PaymentSuccess from './pages/PaymentSuccess'
@@ -29,6 +31,8 @@ function App() {
         <Route path="/category/:categoryName" element={<CategoryPage />} />
         <Route path="/product/:productId" element={<ProductDetail />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/register" element={<Register />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/payment-success" element={<PaymentSuccess />} />
