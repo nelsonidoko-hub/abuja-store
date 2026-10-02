@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 const WHATSAPP_NUMBER = '08132175951' // replace with the client's real number, country code first, no + or spaces
-const DEFAULT_MESSAGE = "Hi! Welcome to Abuja-store Assistant."
+const DEFAULT_MESSAGE = "Hi! I'd like to ask about a product."
 
 function WhatsAppIcon(props) {
   return (

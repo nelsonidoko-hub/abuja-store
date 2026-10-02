@@ -58,66 +58,72 @@ function CategoryPage() {
   }
 
   return (
-    <div className="px-6 pt-18 md:px-10 py-8 font-poppins sm:pt-28">
-      <h2 className="text-2xl font-bold mb-6 capitalize">{categoryName}</h2>
+    <div>
+      <div className="px-6 pt-18 md:px-10 py-8 font-poppins sm:pt-28">
+        <h2 className="text-2xl font-bold mb-6 capitalize">{categoryName}</h2>
 
-      {/* Filter bar */}
-      <div className="flex flex-wrap gap-4 mb-8 pb-4 border-b">
-        <select
-          value={sortBy}
-          onChange={(e) => setSortBy(e.target.value)}
-          className="border rounded-md px-3 py-2 text-sm"
-        >
-          <option value="newest">Newest</option>
-          <option value="price-low">Price: Low to High</option>
-          <option value="price-high">Price: High to Low</option>
-        </select>
+        {/* Filter bar */}
+        <div className="flex flex-wrap gap-4 mb-8 pb-4 border-b">
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="border rounded-md px-3 py-2 text-sm"
+          >
+            <option value="newest">Newest</option>
+            <option value="price-low">Price: Low to High</option>
+            <option value="price-high">Price: High to Low</option>
+          </select>
 
-        <select
-          value={priceRange}
-          onChange={(e) => setPriceRange(e.target.value)}
-          className="border rounded-md px-3 py-2 text-sm"
-        >
-          <option value="all">All Prices</option>
-          <option value="0-5000">Under ₦5,000</option>
-          <option value="5000-15000">₦5,000 - ₦15,000</option>
-          <option value="15000-50000">₦15,000 - ₦50,000</option>
-          <option value="50000-">Above ₦50,000</option>
-        </select>
+          <select
+            value={priceRange}
+            onChange={(e) => setPriceRange(e.target.value)}
+            className="border rounded-md px-3 py-2 text-sm"
+          >
+            <option value="all">All Prices</option>
+            <option value="0-5000">Under ₦5,000</option>
+            <option value="5000-15000">₦5,000 - ₦15,000</option>
+            <option value="15000-50000">₦15,000 - ₦50,000</option>
+            <option value="50000-">Above ₦50,000</option>
+          </select>
 
-        <label className="flex items-center gap-2 text-sm border rounded-md px-3 py-2 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={inStockOnly}
-            onChange={(e) => setInStockOnly(e.target.checked)}
-          />
-          In Stock Only
-        </label>
+          <label className="flex items-center gap-2 text-sm border rounded-md px-3 py-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={inStockOnly}
+              onChange={(e) => setInStockOnly(e.target.checked)}
+            />
+            In Stock Only
+          </label>
 
-        <span className="text-sm text-gray-500 flex items-center ml-auto">
-          {filteredProducts.length} products
-        </span>
+          <span className="text-sm text-gray-500 flex items-center ml-auto">
+            {filteredProducts.length} products
+          </span>
+        </div>
+
+        {filteredProducts.length === 0 ? (
+          <p className="text-gray-500">No products found matching your filters.</p>
+        ) : (
+          <div className="grid grid-cols-1 min-[321px]:grid-cols-2 gap-3 sm:grid-cols-2 md:grid-cols-4 gap-6 font-epilogue">
+            {filteredProducts.map((product) => (
+              <ProductCard key={product._id} product={product} />
+            ))}
+          </div>
+        )}
+
+        
+
+        {/* <Footer /> */}
+      </div>
+      <div className="w-full bg-gray-100 px-0">
+        <FeaturedCollection
+          products={products.slice(0, 4)}
+          image={slide}
+          title="KIDS ROCKING COLLECTION"
+          buttonText="VIEW" className="mb-20 text-center font-poppins"
+          buttonLink="/shop"
+        />
       </div>
 
-      {filteredProducts.length === 0 ? (
-        <p className="text-gray-500">No products found matching your filters.</p>
-      ) : (
-        <div className="grid grid-cols-1 min-[321px]:grid-cols-2 gap-3 sm:grid-cols-2 md:grid-cols-4 gap-6 font-epilogue">
-          {filteredProducts.map((product) => (
-            <ProductCard key={product._id} product={product} />
-          ))}
-        </div>
-      )}
-
-      <FeaturedCollection
-        products={products.slice(0, 4)}
-        image={slide}
-        title="KIDS ROCKING COLLECTION"
-        buttonText="VIEW"
-        buttonLink="/shop"
-      />
-
-      {/* <Footer /> */}
     </div>
   )
 }

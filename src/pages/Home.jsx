@@ -1,10 +1,9 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import ProductCard from '../components/ProductCard'
-import Footer from '../components/Footer'
 import Hero from '../components/Hero'
 import FeaturedCollection from '../components/FeaturedCollection'
-import b18 from '../assets/img/b18.jpg' 
+import b18 from '../assets/img/side-hero2.png'
 import { getProducts, getProductsByCategory, getBestSellers } from '../services/productService'
 import c2 from '../assets/img/c2.jpg'
 import { ChevronLeftIcon, ChevronRightIcon, ArrowRightIcon } from '@heroicons/react/24/outline'
@@ -175,13 +174,13 @@ function Home() {
 
       <FeaturedCollection
         products={products.slice(0, 4)}
-        image={c2}
+        image={b18}
         title="ZERO TO THE WORLD"
         buttonText="VIEW"
         buttonLink="/shop"
       />
 
-      <Footer />
+      {/* <Footer /> */}
     </div>
   )
 }
